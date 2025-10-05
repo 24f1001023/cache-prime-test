@@ -10,19 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
       - uses: actions/checkout@v4
 
-      # 2️⃣ Create a dummy folder to cache
       - run: mkdir -p cache-folder && echo "Hello cache!" > cache-folder/file.txt
 
-      # 3️⃣ Cache the folder and prime the cache
       - uses: actions/cache@v4
         id: cache
         with:
           path: cache-folder
           key: cache-85700f9
 
-      # 4️⃣ Echo cache hit/miss
-      - run: |
+      - name: prime-cache-85700f9   # ✅ This is the required step name
+        run: |
           echo "Cache hit status: ${{ steps.cache.outputs.cache-hit }}"
