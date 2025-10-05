@@ -1,25 +1,40 @@
-name: Cache Prime Workflow
+name: CI with Cache
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Install dependencies first
+      - name: Install dependencies
+        run: npm install
+
+      # 3️⃣ Cache node_modules
       - name: Cache dependencies
-        id: cache-step
+        id: cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache
-          key: cache-85700f9
+          path: node_modules       # folder to cache
+          key: cache-85700f9      # cache key
 
+      # 4️⃣ Prime cache step to echo hit/miss
       - name: prime-cache-85700f9
         run: |
-          echo "Cache hit status: ${{ steps.cache-step.outputs.cache-hit }}"
+          if [ "${{ steps.cache.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache hit!"
+          else
+            echo "Cache miss!"
+          fi
+
+      # 5️⃣ Run your build/test (optional)
+      - name: Run build
+        run: npm run build
